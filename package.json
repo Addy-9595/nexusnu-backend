@@ -6,7 +6,8 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "migrate-urls": "ts-node src/scripts/migrate-urls.ts"
   },
   "keywords": [],
   "author": "",
