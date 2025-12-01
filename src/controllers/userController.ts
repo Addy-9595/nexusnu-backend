@@ -59,7 +59,7 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       return;
     }
 
-    const { name, bio, major, department, profilePicture, skills } = req.body;
+    const { name, bio, major, department, profilePicture, skills, certifications } = req.body;
 
     // Prepare update object
     const updateData: any = { name, bio, major, department };
@@ -82,6 +82,12 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       }
     }
 
+    if (certifications !== undefined) {
+      console.log('📜 Certifications received:', certifications);
+      updateData.certifications = Array.isArray(certifications) ? certifications : [];
+      console.log('📜 Update data certifications:', updateData.certifications);
+    }
+
     const user = await User.findByIdAndUpdate(
       req.user.userId,
       updateData,
@@ -93,6 +99,7 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       return;
     }
 
+    console.log('✅ User after update:', user.certifications);
     res.status(200).json({ message: 'Profile updated successfully', user });
   } catch (error: any) {
     console.error('Update profile error:', error);
