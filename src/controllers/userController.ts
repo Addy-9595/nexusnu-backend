@@ -65,11 +65,11 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
       return;
     }
 
-    const { name, bio, major, department, profilePicture, skills, certifications } = req.body;
+    const { name, bio, location, major, department, profilePicture, skills, certifications } = req.body;
 
     // Prepare update object
-    const updateData: any = { name, bio, major, department };
-    
+    const updateData: any = { name, bio, location, major, department };
+
     // Only update profilePicture if provided
     if (profilePicture !== undefined) {
       updateData.profilePicture = profilePicture;

@@ -14,6 +14,7 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   bio?: string;
+  location?: string;
   major?: string;
   department?: string;
   profilePicture?: string;
@@ -66,6 +67,10 @@ const userSchema = new Schema<IUser>(
       type: String,
       maxlength: [500, 'Bio cannot exceed 500 characters'],
     },
+    location: {
+      type: String,
+      maxlength: [100, 'location cannot exceed 100 characters']
+    },
     major: {
       type: String,
       trim: true,
@@ -104,7 +109,7 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next();
   }
-  
+
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
