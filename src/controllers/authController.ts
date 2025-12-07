@@ -6,7 +6,7 @@ import { AuthRequest } from '../middleware/auth';
 // Register new user
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, email, password, role, bio, major, department } = req.body;
+    const { name, email, password, role, bio, location, major, department } = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -28,6 +28,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password,
       role: role || UserRole.STUDENT,
       bio,
+      location,
       major,
       department,
     });
@@ -54,6 +55,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         role: user.role,
         bio: user.bio,
+        location: user.location,
         major: user.major,
         department: user.department,
       },
@@ -112,6 +114,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         role: user.role,
         bio: user.bio,
+        location: user.location,
         major: user.major,
         department: user.department,
         profilePicture: user.profilePicture,
