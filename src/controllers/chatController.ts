@@ -159,6 +159,11 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
     console.log('🔍 CONVERSATION FIND:', { found: !!conversation, conversationId: conversation?._id });
 
     if (!conversation) {
+      if (req.user.userId === recipientId) {
+        res.status(400).json({ message: 'Cannot message yourself' });
+        return;
+      }
+      
       conversation = await Conversation.create({
         participants: [req.user.userId, recipientId],
         lastMessage: message._id,

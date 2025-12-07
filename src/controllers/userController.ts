@@ -13,7 +13,27 @@ import sharp from 'sharp';
 export const getAllUsers = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const users = await User.find().select('-password');
-    res.status(200).json({ users });
+    
+    // Clean up followers/following arrays by removing invalid ObjectIds
+    const cleanedUsers = await Promise.all(users.map(async (user) => {
+      const userObj = user.toObject();
+      
+      // Verify followers exist
+      const validFollowers = await User.find({ 
+        _id: { $in: userObj.followers } 
+      }).select('_id');
+      userObj.followers = validFollowers.map(f => f._id) as any;
+      
+      // Verify following exist
+      const validFollowing = await User.find({ 
+        _id: { $in: userObj.following } 
+      }).select('_id');
+      userObj.following = validFollowing.map(f => f._id) as any;
+      
+      return userObj;
+    }));
+    
+    res.status(200).json({ users: cleanedUsers });
   } catch (error: any) {
     console.error('Get all users error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -34,6 +54,10 @@ export const getUserById = async (req: AuthRequest, res: Response): Promise<void
       res.status(404).json({ message: 'User not found' });
       return;
     }
+
+    // Filter out null references (deleted users)
+    user.followers = user.followers.filter((f: any) => f != null);
+    user.following = user.following.filter((f: any) => f != null);
 
     console.log('📊 PROFILE FETCH:', {
       userId: id,
